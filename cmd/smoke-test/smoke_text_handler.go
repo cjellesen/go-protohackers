@@ -20,7 +20,7 @@ func (s ConnectionHandler) HandleConnection(ctx context.Context, log *log.Logger
 		err := conn.Close()
 		if err != nil {
 			log.Printf(
-				"Failed to close the connection from %s, failed with error: '%s'",
+				"Failed to close the connection from at %s, failed with error: '%s' - Connection probably reset by peer",
 				conn.RemoteAddr(),
 				err.Error(),
 			)
@@ -41,6 +41,10 @@ func (s ConnectionHandler) HandleConnection(ctx context.Context, log *log.Logger
 					log.Printf("Failed to read packet from %s", conn.RemoteAddr())
 				}
 
+				log.Printf(
+					"Nothing to read from from %s - Returning from handler",
+					conn.RemoteAddr(),
+				)
 				return
 			}
 

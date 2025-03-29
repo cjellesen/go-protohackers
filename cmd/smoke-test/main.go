@@ -134,7 +134,10 @@ func (c *Client) gracefulShutdown(ctx context.Context, conn net.Conn) {
 			c.log.Printf("Attempting to close connection to server: %s", conn.RemoteAddr())
 			err := conn.Close()
 			if err != nil {
-				c.log.Printf("Failed to close connection to server: %s", conn.RemoteAddr())
+				c.log.Printf(
+					"Failed to close connection to server: %s - Connection probably terminated by peer",
+					conn.RemoteAddr(),
+				)
 				return
 			}
 			c.log.Printf("Successfully terminated connection to server: %s", conn.RemoteAddr())
@@ -182,7 +185,7 @@ func main() {
 	}
 
 	fmt.Printf("Server status: %t\n", server.IsActive())
-	for n := range 10 {
+	for n := range 5 {
 		client := NewClient(fmt.Sprintf("Client %d", n))
 		err := client.Connect(ctx, server.Network(), server.ListenerAddr())
 		if err != nil {
